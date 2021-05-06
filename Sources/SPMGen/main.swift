@@ -1,0 +1,3 @@
+import SPMGenLib
+
+SPMGen.main()
