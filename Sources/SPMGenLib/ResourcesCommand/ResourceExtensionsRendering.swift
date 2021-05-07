@@ -17,16 +17,15 @@ func renderStaticFactoryForImageResource() -> String {
   """
   #if canImport(SwiftUI)
     import SwiftUI
-
+    
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Image {
-      @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
       public static func resource(
         _ resource: ImageResource
       ) -> Image {
         Image(resource.name, bundle: resource.bundle)
       }
 
-      @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
       public static func resource(
         _ resource: ImageResource,
         label: Text
@@ -34,7 +33,6 @@ func renderStaticFactoryForImageResource() -> String {
         Image(resource.name, bundle: resource.bundle)
       }
 
-      @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
       public static func resource(
         decorative resource: ImageResource
       ) -> Image {
@@ -71,7 +69,7 @@ func renderStaticFactoryForImageResource() -> String {
       public static func resource(
         _ resource: ImageResource
       ) -> CGImage? {
-        UIImage.resource(resource).flatMap(\\.cgImage)
+        UIImage.resource(resource)?.cgImage
       }
     }
 
@@ -101,34 +99,22 @@ func renderStaticFactoryForImageResource() -> String {
 
 func renderStaticFactoryForColorResource() -> String {
   """
-  #if canImport(SwiftUI) && os(macOS)
+  #if canImport(SwiftUI)
     import SwiftUI
-
+      
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Color {
-      @available(macOS 10.15, *)
       public static func resource(
         _ resource: ColorResource
-      ) -> Color? {
-        NSColor.resource(resource).map(Color.init)
-      }
-    }
-
-  #elseif canImport(SwiftUI) && os(iOS)
-    import SwiftUI
-
-    extension Color {
-      @available(iOS 13.0, *)
-      public static func resource(
-        _ resource: ColorResource
-      ) -> Color? {
-        UIColor.resource(resource).map(Color.init)
+      ) -> Color {
+        Color(resource.name, bundle: resource.bundle)
       }
     }
   #endif
 
   #if os(iOS)
     import UIKit
-
+    
     extension UIColor {
       @available(iOS 11.0, *)
       public static func resource(
@@ -140,10 +126,11 @@ func renderStaticFactoryForColorResource() -> String {
     }
 
     extension CGColor {
+      @available(iOS 11.0, *)
       public static func resource(
         _ resource: ColorResource
       ) -> CGColor? {
-        UIColor.resource(resource).map(\\.cgColor)
+        UIColor.resource(resource)?.cgColor
       }
     }
 
@@ -162,7 +149,7 @@ func renderStaticFactoryForColorResource() -> String {
       public static func resource(
         _ resource: ColorResource
       ) -> CGColor? {
-        NSColor.resource(resource).map(\\.cgColor)
+        NSColor.resource(resource)?.cgColor
       }
     }
   #endif
@@ -198,8 +185,62 @@ func renderStaticFactoryForStoryboardResource() -> String {
 
 func renderStaticFactoryForFontResource() -> String {
   """
+  #if canImport(SwiftUI)
+    import SwiftUI
+    
+    @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+    extension Font {
+      public static func resource(
+        _ resource: FontResource,
+        size: CGFloat
+      ) -> Font {
+        .custom(
+          resource.name,
+          size: size
+        )
+      }
+    }
+      
+    @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
+    extension Font {
+      public static func resource(
+        _ resource: FontResource,
+        size: CGFloat,
+        relativeTo textStyle: Font.TextStyle
+      ) -> Font {
+        .custom(
+          resource.name,
+          size: size,
+          relativeTo: textStyle
+        )
+      }
+
+      public static func resource(
+        _ resource: FontResource,
+        fixedSize: CGFloat
+      ) -> Font {
+        .custom(
+          resource.name,
+          fixedSize: fixedSize
+        )
+      }
+    }
+  #endif
+  
   #if os(iOS)
     import UIKit
+    
+    extension CTFont {
+      public static func resource(
+        _ resource: FontResource,
+        ofSize size: CGFloat
+      ) -> CTFont? {
+        UIFont.resource(
+          resource,
+          ofSize: size
+        ).map { $0 }
+      }
+    }
 
     extension UIFont {
       public static func resource(
@@ -210,6 +251,14 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      public static func registerIfNeeded(
+        _ resource: FontResource
+      ) -> (isRegistered: Bool, didTryToRegister: Bool) {
+        registerIfNeeded([resource]).first
+          .map { ($0.isRegistered, $0.didTryToRegister) }!
+      }
+
+      @discardableResult
       public static func register(
         _ resource: FontResource
       ) -> Bool {
@@ -226,10 +275,48 @@ func renderStaticFactoryForFontResource() -> String {
         CTFontManagerRegisterGraphicsFont(font, &error)
         return error == nil
       }
+      
+      @discardableResult
+      public static func registerIfNeeded(
+        _ resources: [FontResource]
+      ) -> [(font: FontResource, isRegistered: Bool, didTryToRegister: Bool)] {
+        let installedFonts: Set<String> = Set(installed())
+        return resources.map {
+          let isNotRegistered = !installedFonts.contains($0.name)
+          return ($0, isNotRegistered  ? register($0) : true, isNotRegistered) }
+      }
+
+      @discardableResult
+      public static func register(
+        _ resources: [FontResource]
+      ) -> [(font: FontResource, isRegistered: Bool)] {
+        resources.map { ($0, register($0)) }
+      }
+
+      public static func installed() -> [(family: String, fonts: [String])] {
+        familyNames.sorted()
+          .map { (family: $0, fonts: fontNames(forFamilyName: $0).sorted()) }
+      }
+      
+      public static func installed() -> [String] {
+        familyNames.flatMap { fontNames(forFamilyName: $0) }
+      }
     }
 
   #elseif os(macOS)
     import AppKit
+
+    extension CTFont {
+      public static func resource(
+        _ resource: FontResource,
+        ofSize size: CGFloat
+      ) -> CTFont? {
+        NSFont.resource(
+          resource,
+          ofSize: size
+        ).map { $0 }
+      }
+    }
 
     extension NSFont {
       public static func resource(
@@ -238,6 +325,14 @@ func renderStaticFactoryForFontResource() -> String {
       ) -> NSFont? {
         NSFont(name: resource.name, size: size)
       }
+      
+      @discardableResult
+      public static func registerIfNeeded(
+        _ resource: FontResource
+      ) -> (isRegistered: Bool, didTryToRegister: Bool) {
+        registerIfNeeded([resource]).first
+          .map { ($0.isRegistered, $0.didTryToRegister) }!
+      }
 
       @discardableResult
       public static func register(
@@ -258,23 +353,42 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      public static func registerIfNeeded(
+        _ resources: [FontResource]
+      ) -> [(font: FontResource, isRegistered: Bool, didTryToRegister: Bool)] {
+        let installedFonts = installedFontset()
+        return resources.map {
+          let isNotRegistered = !installedFonts.contains($0.name)
+          return ($0, isNotRegistered  ? register($0) : true, isNotRegistered) }
+      }
+
+      @discardableResult
       public static func register(
         _ resources: [FontResource]
-      ) -> (font: FontResource, isRegistered: Bool) {
+      ) -> [(font: FontResource, isRegistered: Bool)] {
         resources.map { ($0, register($0)) }
       }
 
-      public static func installed() -> [(family: String, fonts: [String])] {
-        var output = [(family: String, fonts: [String])]()
-        let fontFamilies = UIFont.familyNames.sorted()
-        for family in fontFamilies {
-          let index = output.count
-          output.append((family, []))
-          for font in UIFont.fontNames(forFamilyName: family).sorted() {
-              output[index].fonts.append(font)
-          }
+      public static func installedUnsorted() -> [(family: String, fonts: [String])] {
+        NSFontManager.shared.availableFontFamilies.map { family in
+          NSFontManager.shared.availableMembers(ofFontFamily: family).map { memebers in
+            (family, memebers.compactMap { $0.first as? String })
+          }.or((family, [String]()))
         }
-        return output
+      }
+      
+      public static func installedFontset() -> Set<String> {
+        Set(
+          (CTFontManagerCopyAvailableFontFamilyNames() as Array).flatMap { family -> [String] in
+            if let family = family as? String {
+              return NSFontManager.shared.availableMembers(ofFontFamily: family)
+                .map { $0.compactMap { $0.first as? String } }
+                .or([String]())
+            } else {
+              return [String]()
+            }
+          }
+        )
       }
     }
   #endif

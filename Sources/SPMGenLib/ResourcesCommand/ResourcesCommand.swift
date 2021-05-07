@@ -71,7 +71,7 @@ func render(
     // This file is generated. Do not edit!
     //
 
-    import SPMResources
+    @_exported import SPMResources
 
     extension Bundle {
       public static var resources: Bundle { .module }
