@@ -69,9 +69,8 @@ Specify resource processing and add SPMResources dependency to your target
 Add a script to your `Run Script` target build phases
 
 ```bash
-cd "$(dirname "$0")"
-spmgen resources "<path_to_your_{Sources/<#Project#>Resources/Resources}_folder>" \
-  --output "<path_to_your_{Sources/<#Project#>Resources}_folder>t" \
+spmgen resources "$SRCROOT/Sources/<#Project#>Resources/Resources" \
+  --output "$SRCROOT/Sources/<#Project#>Resources/SPMGen.swift" \
   --indentor " " \
   --indentation-width 2
 ```
