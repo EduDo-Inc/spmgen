@@ -1,9 +1,9 @@
-import SwiftUI
 import SPMGenExampleResources
+import SwiftUI
 
 public struct ContentView: View {
   public init() {}
-  
+
   public var body: some View {
     NavigationView {
       #if os(iOS)
@@ -23,32 +23,32 @@ public struct ContentView: View {
           )
         )
       #elseif os(macOS)
-      List {
-        NavigationLink(
-          "Image",
-          destination: imageContent()
-        )
-        NavigationLink(
-          "Color",
-          destination: colorContent()
-        )
-        NavigationLink(
-          "Fonts",
-          destination: List {
-            systemFontsContent()
-            customFontsContent()
-          }
-        )
-      }
+        List {
+          NavigationLink(
+            "Image",
+            destination: imageContent()
+          )
+          NavigationLink(
+            "Color",
+            destination: colorContent()
+          )
+          NavigationLink(
+            "Fonts",
+            destination: List {
+              systemFontsContent()
+              customFontsContent()
+            }
+          )
+        }
       #endif
     }
   }
-  
+
   private func systemFontsContent() -> some View {
     let fontWeights: [Font.Weight] = [
       .ultraLight, .thin, .light,
       .regular, .medium, .semibold,
-      .bold, .heavy, .black
+      .bold, .heavy, .black,
     ]
     return Section(header: Text("System")) {
       ForEach(fontWeights, id: \.self) { fontWeight in
@@ -58,7 +58,7 @@ public struct ContentView: View {
       }
     }
   }
-  
+
   private func customFontsContent() -> some View {
     Section(header: Text("Custom")) {
       ForEach(CocoaFont.customFonts, id: \.name) { font in
@@ -68,7 +68,7 @@ public struct ContentView: View {
       }
     }
   }
-  
+
   private func colorContent() -> some View {
     Color
       .resource(.colorExample)
@@ -76,7 +76,7 @@ public struct ContentView: View {
       .edgesIgnoringSafeArea(.all)
       .overlay(CurrentColorSchemeLabel())
   }
-  
+
   private func imageContent() -> some View {
     Image
       .resource(.imageExample)
@@ -91,14 +91,14 @@ public struct ContentView: View {
 private struct DimmView: View {
   @Environment(\.colorScheme)
   private var colorScheme
-  
+
   var body: some View {
     VStack {
       LinearGradient(
         gradient: Gradient(
           colors: [
             (colorScheme == .dark ? .black : .white),
-            .clear
+            .clear,
           ]
         ),
         startPoint: .top,
@@ -112,26 +112,28 @@ private struct DimmView: View {
 private struct CurrentColorSchemeLabel: View {
   @Environment(\.colorScheme)
   private var colorScheme
-  
+
   var body: some View {
     HStack {
       Text("ColorScheme:")
-        .font(Font(
-          colorScheme == .dark
-            ? CocoaFont.primary(ofSize: 18, weight: .bold)
-            : CocoaFont.secondary(ofSize: 18, weight: .bold)
-        ))
+        .font(
+          Font(
+            colorScheme == .dark
+              ? CocoaFont.primary(ofSize: 18, weight: .bold)
+              : CocoaFont.secondary(ofSize: 18, weight: .bold)
+          )
+        )
       Text("\(name(for: colorScheme))")
         .font(.system(size: 18, weight: .regular))
     }
-      .padding()
-      .background(
-        (colorScheme == .dark ? Color.black : .white)
-          .opacity(0.4)
-      )
-      .cornerRadius(8)
+    .padding()
+    .background(
+      (colorScheme == .dark ? Color.black : .white)
+        .opacity(0.4)
+    )
+    .cornerRadius(8)
   }
-  
+
   private func name(for colorSheme: ColorScheme) -> String {
     switch colorScheme {
     case .light: return "Light"

@@ -6,7 +6,7 @@ let package = Package(
   name: "SPMGenExample",
   platforms: [
     .macOS(.v10_15),
-    .iOS(.v13)
+    .iOS(.v13),
   ],
   products: [
     .library(
@@ -33,12 +33,12 @@ let package = Package(
         .product(
           name: "SPMResources",
           package: "spmgen"
-        )
+        ),
       ],
       resources: [
         .process("Resources")
       ]
     ),
-    .target(name: "SPMGenExampleCore")
+    .target(name: "SPMGenExampleCore"),
   ]
 )

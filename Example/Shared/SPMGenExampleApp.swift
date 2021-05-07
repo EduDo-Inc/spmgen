@@ -9,16 +9,16 @@ import SPMGenExampleApp
 import SwiftUI
 
 #if os(iOS)
-public typealias CocoaApplicationDelegateAdaptor = UIApplicationDelegateAdaptor
+  public typealias CocoaApplicationDelegateAdaptor = UIApplicationDelegateAdaptor
 #elseif os(macOS)
-public typealias CocoaApplicationDelegateAdaptor = NSApplicationDelegateAdaptor
+  public typealias CocoaApplicationDelegateAdaptor = NSApplicationDelegateAdaptor
 #endif
 
 @main
 struct SPMGenExampleApp: App {
   @CocoaApplicationDelegateAdaptor
   var appDelegate: AppDelegate
-  
+
   var body: some Scene {
     WindowGroup {
       ContentView()

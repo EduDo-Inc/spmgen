@@ -119,7 +119,7 @@ extension ImageResource {
 
 #if canImport(SwiftUI)
   import SwiftUI
-    
+
   @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
   extension Color {
     public static func resource(
@@ -132,7 +132,7 @@ extension ImageResource {
 
 #if os(iOS)
   import UIKit
-  
+
   extension UIColor {
     @available(iOS 11.0, *)
     public static func resource(
@@ -174,7 +174,7 @@ extension ImageResource {
 
 #if canImport(SwiftUI)
   import SwiftUI
-  
+
   @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
   extension Font {
     public static func resource(
@@ -187,7 +187,7 @@ extension ImageResource {
       )
     }
   }
-    
+
   @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
   extension Font {
     public static func resource(
@@ -216,7 +216,7 @@ extension ImageResource {
 
 #if os(iOS)
   import UIKit
-  
+
   extension CTFont {
     public static func resource(
       _ resource: FontResource,
@@ -262,7 +262,7 @@ extension ImageResource {
       CTFontManagerRegisterGraphicsFont(font, &error)
       return error == nil
     }
-    
+
     @discardableResult
     public static func registerIfNeeded(
       _ resources: [FontResource]
@@ -270,7 +270,8 @@ extension ImageResource {
       let installedFonts: Set<String> = Set(installed())
       return resources.map {
         let isNotRegistered = !installedFonts.contains($0.name)
-        return ($0, isNotRegistered  ? register($0) : true, isNotRegistered) }
+        return ($0, isNotRegistered ? register($0) : true, isNotRegistered)
+      }
     }
 
     @discardableResult
@@ -284,7 +285,7 @@ extension ImageResource {
       familyNames.sorted()
         .map { (family: $0, fonts: fontNames(forFamilyName: $0).sorted()) }
     }
-    
+
     public static func installed() -> [String] {
       familyNames.flatMap { fontNames(forFamilyName: $0) }
     }
@@ -312,7 +313,7 @@ extension ImageResource {
     ) -> NSFont? {
       NSFont(name: resource.name, size: size)
     }
-    
+
     @discardableResult
     public static func registerIfNeeded(
       _ resource: FontResource
@@ -346,7 +347,8 @@ extension ImageResource {
       let installedFonts = installedFontset()
       return resources.map {
         let isNotRegistered = !installedFonts.contains($0.name)
-        return ($0, isNotRegistered  ? register($0) : true, isNotRegistered) }
+        return ($0, isNotRegistered ? register($0) : true, isNotRegistered)
+      }
     }
 
     @discardableResult
@@ -363,7 +365,7 @@ extension ImageResource {
         }.or((family, [String]()))
       }
     }
-    
+
     public static func installedFontset() -> Set<String> {
       Set(
         (CTFontManagerCopyAvailableFontFamilyNames() as Array).flatMap { family -> [String] in
@@ -371,7 +373,8 @@ extension ImageResource {
             return NSFontManager.shared.availableMembers(ofFontFamily: family)
               .map { $0.compactMap { $0.first as? String } }
               .or([String]())
-          } else {
+          }
+          else {
             return [String]()
           }
         }
@@ -382,7 +385,7 @@ extension ImageResource {
 
 #if canImport(SwiftUI)
   import SwiftUI
-  
+
   @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
   extension Image {
     public static func resource(
