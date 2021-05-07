@@ -45,7 +45,7 @@ make install
 Add SPMGen dependency to your package
 
 ```swift
-.package(url: "https://github.com/edudo-inc/spmgen.git", from: "1.0.0")
+.package(url: "https://github.com/edudo-inc/spmgen.git", from: "1.0.1")
 ```
 
 Create `<#Project#>Resources` target with a following structure
@@ -65,7 +65,7 @@ Specify resource processing and add SPMResources dependency to your target
   dependencies: [
     .product(
       name: "SPMResources",
-      package: "SPMGen"
+      package: "spmgen"
     )
   ],
   resources: [
