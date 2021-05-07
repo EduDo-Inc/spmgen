@@ -17,7 +17,7 @@ func renderStaticFactoryForImageResource() -> String {
   """
   #if canImport(SwiftUI)
     import SwiftUI
-    
+
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Image {
       public static func resource(
@@ -101,7 +101,7 @@ func renderStaticFactoryForColorResource() -> String {
   """
   #if canImport(SwiftUI)
     import SwiftUI
-      
+
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Color {
       public static func resource(
@@ -187,7 +187,7 @@ func renderStaticFactoryForFontResource() -> String {
   """
   #if canImport(SwiftUI)
     import SwiftUI
-    
+
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Font {
       public static func resource(
@@ -226,10 +226,10 @@ func renderStaticFactoryForFontResource() -> String {
       }
     }
   #endif
-  
+
   #if os(iOS)
     import UIKit
-    
+
     extension CTFont {
       public static func resource(
         _ resource: FontResource,
@@ -275,7 +275,7 @@ func renderStaticFactoryForFontResource() -> String {
         CTFontManagerRegisterGraphicsFont(font, &error)
         return error == nil
       }
-      
+
       @discardableResult
       public static func registerIfNeeded(
         _ resources: [FontResource]
@@ -297,7 +297,7 @@ func renderStaticFactoryForFontResource() -> String {
         familyNames.sorted()
           .map { (family: $0, fonts: fontNames(forFamilyName: $0).sorted()) }
       }
-      
+
       public static func installed() -> [String] {
         familyNames.flatMap { fontNames(forFamilyName: $0) }
       }

@@ -23,6 +23,9 @@ extension SPMGen {
     @Option(help: "Indentation width")
     public var indentationWidth: UInt = 2
 
+    @Flag(help: "Disables @_exported import for SPMResources")
+    public var disableExports = false
+
     func run() throws {
       let outputPath = output ?? input.appending("/SPMGen.swift")
       createOutputIfNeeded(at: outputPath)
@@ -45,6 +48,7 @@ extension SPMGen {
       try outputFile.write(
         render(
           reducedResources,
+          exportEnabled: !disableExports,
           filename: outputFile.name,
           indentor: indentor,
           width: indentationWidth
@@ -56,6 +60,7 @@ extension SPMGen {
 
 func render(
   _ reducedResources: [String: [RenderableResource]],
+  exportEnabled: Bool = true,
   filename: String,
   indentor: String,
   width: UInt
@@ -67,11 +72,11 @@ func render(
   let output =
     """
     //
-    // \(filename)
+    // \(exportEnabled)
     // This file is generated. Do not edit!
     //
 
-    @_exported import SPMResources
+    \(exportEnabled ? "@_exported " : "")import SPMResources
 
     extension Bundle {
       public static var resources: Bundle { .module }

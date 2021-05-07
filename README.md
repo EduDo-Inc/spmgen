@@ -21,6 +21,16 @@ Supported resources:
 
 Install `spmgen` CLI
 
+### Installation
+
+#### Homebrew
+
+```bash
+brew install edudo-inc/formulae/spmgen
+```
+
+#### Makefile
+
 ```bash
 # Download repo
 git clone https://github.com/edudo-inc/spmgen.git
@@ -33,6 +43,8 @@ make install
 
 # You can also delete spmgen using `make uninstall` command
 ```
+
+### Integration
 
 Add SPMGen dependency to your package
 
@@ -73,6 +85,9 @@ spmgen resources "$SRCROOT/Sources/<#Project#>Resources/Resources" \
   --output "$SRCROOT/Sources/<#Project#>Resources/SPMGen.swift" \
   --indentor " " \
   --indentation-width 2
+
+# You can also add `--disable-exports` flag to disable `@_exported` attribute
+# for `import SPMResources` declaration in generated file
 ```
 
 Add `<#Project#>Resources` target as a dependency to other targets

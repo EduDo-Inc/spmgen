@@ -14,6 +14,13 @@ install_bin:
 uninstall:
 	rm -f $(PREFIX)/bin/$(INSTALL_NAME)
 
-format:
+format: format-sources format-example
+
+format-sources:
 	swift format --in-place --recursive \
 		./Package.swift ./Sources ./Tests
+
+format-example:
+	swift format --in-place --recursive \
+		./Example/Package.swift ./Example/Sources \
+		./Example/iOS ./Example/macOS ./Example/Shared
