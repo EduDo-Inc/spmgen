@@ -200,7 +200,7 @@ func renderStaticFactoryForFontResource() -> String {
         )
       }
     }
-      
+
     @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     extension Font {
       public static func resource(
@@ -325,7 +325,7 @@ func renderStaticFactoryForFontResource() -> String {
       ) -> NSFont? {
         NSFont(name: resource.name, size: size)
       }
-      
+
       @discardableResult
       public static func registerIfNeeded(
         _ resource: FontResource

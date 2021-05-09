@@ -6,11 +6,6 @@ import SPMResources
 // MARK: - Command
 extension SPMGen {
   struct Resources: ParsableCommand {
-    enum IndentationKind: String {
-      case tabs
-      case spaces
-    }
-
     @Argument(help: "Path to root directory for scanning.")
     public var input: String = "./"
 
@@ -72,7 +67,7 @@ func render(
   let output =
     """
     //
-    // \(exportEnabled)
+    // \(filename)
     // This file is generated. Do not edit!
     //
 
