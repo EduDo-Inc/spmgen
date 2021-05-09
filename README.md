@@ -23,7 +23,11 @@ Install `spmgen` CLI
 
 ### Installation
 
-> Homebrew support will be added soon
+#### Homebrew
+
+```bash
+brew install edudo-inc/formulae/spmgen
+```
 
 #### Makefile
 
