@@ -25,8 +25,8 @@ let package = Package(
     ),
   ],
   dependencies: [
-    .package(url: "git@github.com:apple/swift-argument-parser.git", from: "0.3.0"),
-    .package(url: "git@github.com:JohnSundell/Files.git", from: "4.0.0"),
+    .package(url: "https://github.com/apple/swift-argument-parser.git", from: "0.3.0"),
+    .package(url: "https://github.com/JohnSundell/Files.git", from: "4.0.0"),
   ],
   targets: [
     .target(
