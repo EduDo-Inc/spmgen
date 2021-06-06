@@ -3,7 +3,7 @@ import XCTest
 
 @testable import SPMGenLib
 
-final class SPMGenLibTests: XCTestCase {
+final class ResourcesTests: XCTestCase {
   func testCamelCase() {
     XCTAssertEqual("u".camelCased(), "u")
     XCTAssertEqual("lowercase".camelCased(), "lowercase")
