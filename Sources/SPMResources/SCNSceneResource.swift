@@ -1,4 +1,4 @@
-public struct SCNSceneResource: BundleResource, NamedType {
+public struct SCNSceneResource: BundleResource, NamedType, Equatable {
   public static let extensions: [String] = ["scn"]
 
   public var name: String
