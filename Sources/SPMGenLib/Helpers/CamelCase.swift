@@ -32,8 +32,7 @@ extension String {
 
     if result.isEmpty { return String(underscorePrefix) }
 
-    var allowedSet = CharacterSet.alphanumerics
-    allowedSet.insert(".")
+    let allowedSet: CharacterSet = .alphanumerics
     let parts = result.components(separatedBy: allowedSet.inverted)
 
     let first =
