@@ -32,7 +32,10 @@ extension String {
 
     if result.isEmpty { return String(underscorePrefix) }
 
-    let allowedSet: CharacterSet = .alphanumerics
+    var allowedSet: CharacterSet = .alphanumerics
+    if rangeOfCharacter(from: .decimalDigits) != nil {
+      allowedSet.insert(".")
+    }
     let parts = result.components(separatedBy: allowedSet.inverted)
 
     let first =

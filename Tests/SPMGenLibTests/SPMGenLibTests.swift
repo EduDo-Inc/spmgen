@@ -14,6 +14,8 @@ final class SPMGenLibTests: XCTestCase {
     XCTAssertEqual("1numbered".camelCased(), "_1numbered")
     XCTAssertEqual("_unknown.symbols_found".camelCased(.uppercaseFirst), "_UnknownSymbolsFound")
     XCTAssertEqual("trailingSymbol$".camelCased(), "trailingSymbol")
+    XCTAssertEqual("testImage.1".camelCased(), "testImage_1")
+    XCTAssertEqual("testImage.1.2.3".camelCased(), "testImage_1_2_3")
   }
 
   func testResourceReducing() {
