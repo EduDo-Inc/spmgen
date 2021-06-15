@@ -17,12 +17,12 @@ class EnumSyntaxRewriter: SyntaxRewriter {
   var generationData = GenerationData()
   var nestedTypesMap: [SyntaxIdentifier: ParentTypeData] = [:]
   var ignoreList: Set<SyntaxIdentifier> = []
-  
+
   func reset() {
     generationData = GenerationData()
     nestedTypesMap = [:]
   }
-  
+
   override func visit(_ node: ImportDeclSyntax) -> DeclSyntax {
     generationData.imports.append(
       node.withoutTrivia().description
@@ -30,10 +30,10 @@ class EnumSyntaxRewriter: SyntaxRewriter {
     )
     return super.visit(node)
   }
-  
+
   override func visit(_ node: EnumDeclSyntax) -> DeclSyntax {
     registerParentIfNeeded(for: node)
-    
+
     if !ignoreList.contains(node.id) {
       var enumData = extractBaseEnumData(from: node)
       if !enumData.modifiers.contains("fileprivate") {
@@ -41,10 +41,10 @@ class EnumSyntaxRewriter: SyntaxRewriter {
         generationData.enums.append(enumData)
       }
     }
-    
+
     return super.visit(node)
   }
-  
+
   func extractBaseEnumData(from node: EnumDeclSyntax) -> EnumData {
     EnumData(
       modifiers: node.modifiers.map {
@@ -52,9 +52,13 @@ class EnumSyntaxRewriter: SyntaxRewriter {
           let modifier = $0.withoutTrivia()
             .description
             .trimmingCharacters(in: .whitespacesAndNewlines)
-          
-          if modifier == "indirect" { return nil }
-          else { return modifier }
+
+          if modifier == "indirect" {
+            return nil
+          }
+          else {
+            return modifier
+          }
         }
       } ?? [],
       identifier: node.identifier.withoutTrivia()
@@ -73,7 +77,7 @@ class EnumSyntaxRewriter: SyntaxRewriter {
       parentType: nil
     )
   }
-  
+
   override func visit(_ node: EnumCaseDeclSyntax) -> DeclSyntax {
     node.elements.forEach { element in
       guard !generationData.enums.isEmpty else { return }
@@ -90,29 +94,29 @@ class EnumSyntaxRewriter: SyntaxRewriter {
                   .trimmingCharacters(in: .whitespacesAndNewlines)
               )
             }
-            
+
           } ?? []
         )
       )
     }
     return super.visit(node)
   }
-  
+
   override func visit(_ node: ClassDeclSyntax) -> DeclSyntax {
     registerAsParentIfNeeded(node)
     return super.visit(node)
   }
-  
+
   override func visit(_ node: StructDeclSyntax) -> DeclSyntax {
     registerAsParentIfNeeded(node)
     return super.visit(node)
   }
-  
+
   override func visit(_ node: ExtensionDeclSyntax) -> DeclSyntax {
     registerAsParentIfNeeded(node)
     return super.visit(node)
   }
-  
+
   override func visit(_ node: FunctionDeclSyntax) -> DeclSyntax {
     traverse(Syntax(node)) { syntax in
       if let id = syntax.as(EnumDeclSyntax.self)?.id {
@@ -121,7 +125,7 @@ class EnumSyntaxRewriter: SyntaxRewriter {
     }
     return super.visit(node)
   }
-  
+
   override func visit(_ node: ClosureExprSyntax) -> ExprSyntax {
     traverse(Syntax(node)) { syntax in
       if let id = syntax.as(EnumDeclSyntax.self)?.id {
@@ -130,7 +134,7 @@ class EnumSyntaxRewriter: SyntaxRewriter {
     }
     return super.visit(node)
   }
-  
+
   func registerParentIfNeeded(for node: EnumDeclSyntax) {
     node.members.members.forEach { subnode in
       subnode.children.map({ child in
@@ -157,7 +161,7 @@ class EnumSyntaxRewriter: SyntaxRewriter {
       }
     }
   }
-  
+
   func registerAsParentIfNeeded(_ node: ClassDeclSyntax) {
     node.members.members.forEach { subnode in
       subnode.children.map({ child in
@@ -184,7 +188,7 @@ class EnumSyntaxRewriter: SyntaxRewriter {
       }
     }
   }
-  
+
   func registerAsParentIfNeeded(_ node: StructDeclSyntax) {
     node.members.members.forEach { subnode in
       subnode.children.map({ child in
@@ -211,7 +215,7 @@ class EnumSyntaxRewriter: SyntaxRewriter {
       }
     }
   }
-  
+
   func registerAsParentIfNeeded(_ node: ExtensionDeclSyntax) {
     node.members.members.forEach { subnode in
       subnode.children.map({ child in
@@ -229,12 +233,12 @@ class EnumSyntaxRewriter: SyntaxRewriter {
       }
     }
   }
-  
+
   func collectParentType(for id: SyntaxIdentifier) -> ParentTypeData? {
     guard let parent = nestedTypesMap[id] else { return nil }
     return _collectParentType(subparent: parent)
   }
-  
+
   func _collectParentType(subparent: ParentTypeData) -> ParentTypeData {
     guard let parent = collectParentType(for: subparent.id)
     else { return subparent }

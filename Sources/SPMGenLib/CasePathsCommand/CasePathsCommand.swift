@@ -1,12 +1,12 @@
-import Foundation
 import ArgumentParser
 import Files
+import Foundation
 import SwiftSyntax
 
 extension Location {
   var nameWithoutExtension: String {
     let components = name.components(separatedBy: ".")
-    return components.filter { !$0.isEmpty } .count > 1
+    return components.filter { !$0.isEmpty }.count > 1
       ? components.dropLast().joined(separator: ".")
       : name
   }
@@ -19,8 +19,8 @@ let process: (URL) -> GenerationData? = {
     _ = enumProcessor.visit(root)
     let generationData = enumProcessor.generationData
     enumProcessor.reset()
-    let ignoreOutput = generationData.enums.isEmpty ||
-      generationData.enums.allSatisfy(\.cases.isEmpty)
+    let ignoreOutput =
+      generationData.enums.isEmpty || generationData.enums.allSatisfy(\.cases.isEmpty)
     return ignoreOutput ? nil : generationData
   }
 }()
@@ -29,7 +29,7 @@ let process: (URL) -> GenerationData? = {
 extension SPMGen {
   struct CasePaths: ParsableCommand {
     static var _commandName: String { "casepaths" }
-    
+
     @Argument(help: "Path to root directory for scanning.")
     public var input: String = "./"
 
@@ -41,7 +41,9 @@ extension SPMGen {
 
     func run() throws {
       let folder = try Folder(path: input)
-      let indent: (Int) -> String = { String(repeating: indentor, count: Int(indentationWidth) * $0) }
+      let indent: (Int) -> String = {
+        String(repeating: indentor, count: Int(indentationWidth) * $0)
+      }
       try process(folder, indent: indent)
     }
   }
@@ -70,55 +72,55 @@ func process(_ file: File) -> String? {
 
 func generateCasePaths(for data: GenerationData) -> String {
   let fileAnnotation = """
-  //  The file is generated using
-  //  https://github.com/edudo-inc/spmgen
-  //
-  //  Do not modify!
-  """
-  
+    //  The file is generated using
+    //  https://github.com/edudo-inc/spmgen
+    //
+    //  Do not modify!
+    """
+
   var imports = data.imports
   if !imports.contains("import CasePaths") { imports.append("import CasePaths") }
   let importsString = imports.sorted().joined(separator: "\n")
   let importsSeparator = imports.isEmpty ? "" : "\n\n"
-  
+
   let enums = data.enums
     .filter { !$0.cases.isEmpty }
     .sorted(by: { $0.identifier < $1.identifier })
     .map(generateCasePaths)
-  
-  return fileAnnotation + "\n\n" +
-    importsString + importsSeparator +
-    enums.joined(separator: "\n\n")
+
+  return fileAnnotation + "\n\n" + importsString + importsSeparator
+    + enums.joined(separator: "\n\n")
 }
 
 func generateCasePaths(for enumData: EnumData) -> String {
-  let openExtension = enumData.allAssociatedTypes.isEmpty
+  let openExtension =
+    enumData.allAssociatedTypes.isEmpty
     ? "extension CasePath where Root == \(enumData.fullGenericName) {"
     : "extension CasePath {"
-  
+
   func implementation(_ caseData: CaseData) -> String {
     switch caseData.parameters.count {
     case 0:
       return """
-          .init(
-            embed: { .\(caseData.identifier) },
-            extract: {
-              guard case .\(caseData.identifier) = $0 else { return nil }
-              return ()
-            }
-          )
-      """
+            .init(
+              embed: { .\(caseData.identifier) },
+              extract: {
+                guard case .\(caseData.identifier) = $0 else { return nil }
+                return ()
+              }
+            )
+        """
     case 1:
       let embedParameters = (caseData.parameters.first!.label.map { "\($0): " } ?? "") + "$0"
       return """
-          .init(
-            embed: { .\(caseData.identifier)(\(embedParameters)) },
-            extract: {
-              guard case let .\(caseData.identifier)(t0) = $0 else { return nil }
-              return t0
-            }
-          )
-      """
+            .init(
+              embed: { .\(caseData.identifier)(\(embedParameters)) },
+              extract: {
+                guard case let .\(caseData.identifier)(t0) = $0 else { return nil }
+                return t0
+              }
+            )
+        """
     default:
       func generateList(_ code: (Int, String?) -> String) -> String {
         caseData.parameters
@@ -127,15 +129,15 @@ func generateCasePaths(for enumData: EnumData) -> String {
           .map(code)
           .joined(separator: ", ")
       }
-      
+
       let generated = (
         embedParameters: generateList { index, label in
           (label.map { "\($0): " } ?? "") + "$0.\(index)"
         },
         matchParameters: generateList { index, label in "t\(index)" }
       )
-      
-      return  """
+
+      return """
             .init(
               embed: { .\(caseData.identifier)(\(generated.embedParameters)) },
               extract: {
@@ -146,35 +148,45 @@ func generateCasePaths(for enumData: EnumData) -> String {
         """
     }
   }
-  
-  let declaration: (CaseData) -> String = enumData.allAssociatedTypes.isEmpty
+
+  let declaration: (CaseData) -> String =
+    enumData.allAssociatedTypes.isEmpty
     ? { caseData in
       switch caseData.parameters.count {
-      case 0: return
-        "  \(enumData.joinedModifiers) static var \(caseData.identifier): CasePath<Root, Void> {\n"
-      case 1: return
-        "  \(enumData.joinedModifiers) static var \(caseData.identifier): CasePath<Root, \(caseData.parameters.first!.type)> {\n"
+      case 0:
+        return
+          "  \(enumData.joinedModifiers) static var \(caseData.identifier): CasePath<Root, Void> {\n"
+      case 1:
+        return
+          "  \(enumData.joinedModifiers) static var \(caseData.identifier): CasePath<Root, \(caseData.parameters.first!.type)> {\n"
       default:
         let associatedTypes = caseData.parameters.map(\.type).joined(separator: ", ")
-        return "  \(enumData.joinedModifiers) static var \(caseData.identifier): CasePath<Root, (\(associatedTypes))> {\n"
+        return
+          "  \(enumData.joinedModifiers) static var \(caseData.identifier): CasePath<Root, (\(associatedTypes))> {\n"
       }
     }
     : { caseData in
-      let associatedTypesDeclaration = enumData.allAssociatedTypes.map(\.declaration).joined(separator: ", ")
-      let declarationPrefix = "  \(enumData.joinedModifiers) static func \(caseData.identifier)<\(associatedTypesDeclaration)>()"
+      let associatedTypesDeclaration = enumData.allAssociatedTypes.map(\.declaration).joined(
+        separator: ", "
+      )
+      let declarationPrefix =
+        "  \(enumData.joinedModifiers) static func \(caseData.identifier)<\(associatedTypesDeclaration)>()"
       let whereDeclaration = "  where Root == \(enumData.fullGenericName) {\n"
-      
+
       switch caseData.parameters.count {
-      case 0: return
-        declarationPrefix + " -> CasePath<Root, Void>\n" + whereDeclaration
-      case 1: return
-        declarationPrefix + " -> CasePath<Root, \(caseData.parameters.first!.type)>\n" + whereDeclaration
+      case 0:
+        return
+          declarationPrefix + " -> CasePath<Root, Void>\n" + whereDeclaration
+      case 1:
+        return
+          declarationPrefix + " -> CasePath<Root, \(caseData.parameters.first!.type)>\n"
+          + whereDeclaration
       default:
         let associatedTypes = caseData.parameters.map(\.type).joined(separator: ", ")
         return declarationPrefix + " -> CasePath<Root, (\(associatedTypes)>\n" + whereDeclaration
       }
     }
-  
+
   let staticGetters = enumData.cases
     .sorted(by: { $0.identifier < $1.identifier })
     .map { caseData in
@@ -182,6 +194,6 @@ func generateCasePaths(for enumData: EnumData) -> String {
       let impl = implementation(caseData)
       return decl + impl + "\n  }"
     }.joined(separator: "\n\n")
-  
+
   return openExtension + "\n" + staticGetters + "\n}"
 }

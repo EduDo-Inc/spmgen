@@ -37,7 +37,7 @@ let package = Package(
       name: "SwiftSyntax",
       url: "https://github.com/apple/swift-syntax.git",
       .exact("0.50400.0")
-    )
+    ),
   ],
   targets: [
     .target(
@@ -61,7 +61,7 @@ let package = Package(
         .product(
           name: "SwiftSyntax",
           package: "SwiftSyntax"
-        )
+        ),
       ]
     ),
     .testTarget(
@@ -72,7 +72,7 @@ let package = Package(
         .product(
           name: "SwiftSyntax",
           package: "SwiftSyntax"
-        )
+        ),
       ]
     ),
     .target(name: "SPMResources"),

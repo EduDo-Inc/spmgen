@@ -231,7 +231,7 @@ func renderStaticFactoryForFontResource() -> String {
           relativeTo: textStyle
         )
       }
-  
+
       @inlinable
       public static func resource(
         _ resource: FontResource,

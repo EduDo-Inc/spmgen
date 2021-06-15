@@ -1,29 +1,30 @@
-import XCTest
-@testable import SPMGenLib
 import SwiftSyntax
+import XCTest
+
+@testable import SPMGenLib
 
 final class CasePathsTests: XCTestCase {
   func testLocalScope() {
     let source = """
-    struct A {
-      func a() {
-        enum Ignore { case none }
+      struct A {
+        func a() {
+          enum Ignore { case none }
+        }
       }
-    }
-    
-    extension A {
-      enum Event {
-        case none
+
+      extension A {
+        enum Event {
+          case none
+        }
       }
-    }
-    """
-    
+      """
+
     let detector = EnumSyntaxRewriter()
     _ = try! detector.visit(SyntaxParser.parse(source: source))
     let generationData = detector.generationData
-    
+
     let syntaxID = generationData.enums.first!.parentType!.id
-    
+
     XCTAssertEqual(
       generationData,
       GenerationData(
@@ -49,25 +50,25 @@ final class CasePathsTests: XCTestCase {
       )
     )
   }
-  
+
   func testDefaultGeneration() {
     let source = """
-    // Comment
-    
-    import Foundation
-    import EduDoComposableArchitecture
-    
-    internal enum Example {
-      case a
-      case t1(T1)
-      case t2(Int = 1, T2, Bool, String)
-    }
-    """
+      // Comment
+
+      import Foundation
+      import EduDoComposableArchitecture
+
+      internal enum Example {
+        case a
+        case t1(T1)
+        case t2(Int = 1, T2, Bool, String)
+      }
+      """
     let detector = EnumSyntaxRewriter()
     _ = try! detector.visit(SyntaxParser.parse(source: source))
     let generationData = detector.generationData
     let casePaths = generateCasePaths(for: generationData)
-    
+
     XCTAssertEqual(
       casePaths,
       """
@@ -75,7 +76,7 @@ final class CasePathsTests: XCTestCase {
       //  https://github.com/edudo-inc/spmgen
       //
       //  Do not modify!
-      
+
       import Foundation
       import EduDoComposableArchitecture
       import CasePaths
@@ -114,28 +115,28 @@ final class CasePathsTests: XCTestCase {
       """
     )
   }
-  
+
   func testGenericGeneration() {
     let source = """
-    import Foundation
-    import EduDoComposableArchitecture
-    
-    public enum Action<Subaction: Equatable>: Equatable {
-      case subaction(Subaction)
-      case bool(Bool)
-      case event(Event)
-    
-      public enum Event: Equatable {
-        case first
-        case second
+      import Foundation
+      import EduDoComposableArchitecture
+
+      public enum Action<Subaction: Equatable>: Equatable {
+        case subaction(Subaction)
+        case bool(Bool)
+        case event(Event)
+
+        public enum Event: Equatable {
+          case first
+          case second
+        }
       }
-    }
-    """
+      """
     let detector = EnumSyntaxRewriter()
     _ = try! detector.visit(SyntaxParser.parse(source: source))
     let generationData = detector.generationData
     let casePaths = generateCasePaths(for: generationData)
-    
+
     XCTAssertEqual(
       casePaths,
       """
@@ -143,11 +144,11 @@ final class CasePathsTests: XCTestCase {
       //  https://github.com/edudo-inc/spmgen
       //
       //  Do not modify!
-      
+
       import Foundation
       import EduDoComposableArchitecture
       import CasePaths
-      
+
       extension CasePath {
         public static func subaction<Subaction: Equatable>() -> CasePath<Root, Subaction>
         where Root == Action<Subaction> {
@@ -159,7 +160,7 @@ final class CasePathsTests: XCTestCase {
             }
           )
         }
-      
+
         public static func bool<Subaction: Equatable>() -> CasePath<Root, Bool>
         where Root == Action<Subaction> {
           .init(
@@ -170,7 +171,7 @@ final class CasePathsTests: XCTestCase {
             }
           )
         }
-      
+
         public static func event<Subaction: Equatable>() -> CasePath<Root, Event>
         where Root == Action<Subaction> {
           .init(
@@ -182,7 +183,7 @@ final class CasePathsTests: XCTestCase {
           )
         }
       }
-      
+
       extension CasePath {
         public static func first<Subaction: Equatable>() -> CasePath<Root, Void>
         where Root == Action<Subaction>.Event {
@@ -194,7 +195,7 @@ final class CasePathsTests: XCTestCase {
             }
           )
         }
-      
+
         public static func second<Subaction: Equatable>() -> CasePath<Root, Void>
         where Root == Action<Subaction>.Event {
           .init(
@@ -209,36 +210,36 @@ final class CasePathsTests: XCTestCase {
       """
     )
   }
-  
+
   func testSyntax() {
     let source = """
-    import Foundation
-    import EduDoComposableArchitecture
-    
-    public enum Example<T1, T2: Equatable & Hashable>: Equatable {
-      case t1(T1)
-      case t2(Int, T2)
-      case a(value: Bool = false)
-      case b, c, d
-      case e; case f(Result<Int, Never> = .success(0 + 1))
-      case event(Event)
-      enum Event: Equatable {
-        case none
+      import Foundation
+      import EduDoComposableArchitecture
+
+      public enum Example<T1, T2: Equatable & Hashable>: Equatable {
+        case t1(T1)
+        case t2(Int, T2)
+        case a(value: Bool = false)
+        case b, c, d
+        case e; case f(Result<Int, Never> = .success(0 + 1))
+        case event(Event)
+        enum Event: Equatable {
+          case none
+        }
       }
-    }
-    """
+      """
     let detector = EnumSyntaxRewriter()
     _ = try! detector.visit(SyntaxParser.parse(source: source))
     let generationData = detector.generationData
-    
+
     let eventParentID = generationData.enums[1].parentType!.id
-    
+
     XCTAssertEqual(
       generationData,
       GenerationData(
         imports: [
           "import Foundation",
-          "import EduDoComposableArchitecture"
+          "import EduDoComposableArchitecture",
         ],
         enums: [
           EnumData(
@@ -252,7 +253,7 @@ final class CasePathsTests: XCTestCase {
               AssociatedTypeData(
                 identifier: "T2",
                 inheritedType: "Equatable & Hashable"
-              )
+              ),
             ],
             cases: [
               CaseData(
@@ -265,7 +266,7 @@ final class CasePathsTests: XCTestCase {
                 identifier: "t2",
                 parameters: [
                   CaseParameter(type: "Int"),
-                  CaseParameter(type: "T2")
+                  CaseParameter(type: "T2"),
                 ]
               ),
               CaseData(
@@ -304,7 +305,7 @@ final class CasePathsTests: XCTestCase {
                 parameters: [
                   CaseParameter(type: "Event")
                 ]
-              )
+              ),
             ],
             parentType: nil
           ),
@@ -329,32 +330,32 @@ final class CasePathsTests: XCTestCase {
                 AssociatedTypeData(
                   identifier: "T2",
                   inheritedType: "Equatable & Hashable"
-                )
+                ),
               ]
             )
-          )
+          ),
         ]
       )
     )
   }
-  
+
   func testExtensionSyntax() {
     let source = """
-    struct A {}
-    
-    extension A {
-      enum Event {
-        case none
+      struct A {}
+
+      extension A {
+        enum Event {
+          case none
+        }
       }
-    }
-    """
-    
+      """
+
     let detector = EnumSyntaxRewriter()
     _ = try! detector.visit(SyntaxParser.parse(source: source))
     let generationData = detector.generationData
-    
+
     let syntaxID = generationData.enums.first!.parentType!.id
-    
+
     XCTAssertEqual(
       generationData,
       GenerationData(
@@ -380,40 +381,40 @@ final class CasePathsTests: XCTestCase {
       )
     )
   }
-  
+
   func testDeepNesting() {
     let source = """
-    import A
-    import Foundation
-    
-    extension A {
-      struct Ignore {
-        struct Subignore {}
-      }
-      struct B {
-        struct C {
-          enum Event {
-            case none
+      import A
+      import Foundation
+
+      extension A {
+        struct Ignore {
+          struct Subignore {}
+        }
+        struct B {
+          struct C {
+            enum Event {
+              case none
+            }
           }
         }
       }
-    }
-    """
-    
+      """
+
     let detector = EnumSyntaxRewriter()
     _ = try! detector.visit(SyntaxParser.parse(source: source))
     let generationData = detector.generationData
-    
+
     let parentC = generationData.enums.first!.parentType!
     let parentB = parentC.parent!
     let parentA = parentB.parent!
-    
+
     XCTAssertEqual(
       generationData,
       GenerationData(
         imports: [
           "import A",
-          "import Foundation"
+          "import Foundation",
         ],
         enums: [
           EnumData(
@@ -445,9 +446,9 @@ final class CasePathsTests: XCTestCase {
         ]
       )
     )
-    
+
     let output = generateCasePaths(for: generationData)
-    
+
     XCTAssertEqual(
       output,
       """
@@ -455,11 +456,11 @@ final class CasePathsTests: XCTestCase {
       //  https://github.com/edudo-inc/spmgen
       //
       //  Do not modify!
-      
+
       import A
       import CasePaths
       import Foundation
-      
+
       extension CasePath where Root == A.B.C.Event {
          static var none: CasePath<Root, Void> {
           .init(

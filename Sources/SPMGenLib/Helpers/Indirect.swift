@@ -32,24 +32,24 @@ import Foundation
 @dynamicMemberLookup
 public struct Indirect<Value> {
   private var storage: [Value]
-  
+
   public init(wrappedValue value: Value) {
     self.init(value)
   }
-  
+
   public init(_ value: Value) {
     storage = [value]
   }
-  
+
   public var wrappedValue: Value {
     get { storage[0] }
     set { storage[0] = newValue }
   }
-  
+
   public subscript<T>(dynamicMember keyPath: KeyPath<Value, T>) -> T {
     wrappedValue[keyPath: keyPath]
   }
-  
+
   public subscript<T>(dynamicMember keyPath: WritableKeyPath<Value, T>) -> T {
     get { wrappedValue[keyPath: keyPath] }
     set { wrappedValue[keyPath: keyPath] = newValue }
@@ -72,7 +72,7 @@ extension Indirect: Codable where Value: Codable {
   public init(from decoder: Decoder) throws {
     try self.init(.init(from: decoder))
   }
-  
+
   public func encode(to encoder: Encoder) throws {
     try wrappedValue.encode(to: encoder)
   }
