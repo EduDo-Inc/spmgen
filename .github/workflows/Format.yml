@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install
-        run:
-          brew tap maximkrouk/formulae \
+        run: |
+          brew tap maximkrouk/formulae
           brew install Formulae/swift-format
       - name: Format
         run: make format
