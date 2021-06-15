@@ -12,7 +12,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install
-        run: brew install maximkrouk/formulae/swift-format
+        run:
+          brew tap maximkrouk/formulae
+          brew install Formulae/swift-format
       - name: Format
         run: make format
       - uses: stefanzweifel/git-auto-commit-action@v4
