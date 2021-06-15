@@ -20,12 +20,14 @@ func renderStaticFactoryForImageResource() -> String {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Image {
+      @inlinable
       public static func resource(
         _ resource: ImageResource
       ) -> Image {
         Image(resource.name, bundle: resource.bundle)
       }
 
+      @inlinable
       public static func resource(
         _ resource: ImageResource,
         label: Text
@@ -33,6 +35,7 @@ func renderStaticFactoryForImageResource() -> String {
         Image(resource.name, bundle: resource.bundle)
       }
 
+      @inlinable
       public static func resource(
         decorative resource: ImageResource
       ) -> Image {
@@ -46,6 +49,7 @@ func renderStaticFactoryForImageResource() -> String {
 
     extension UIImage {
       @available(iOS 13.0, *)
+      @inlinable
       public static func resource(
         _ resource: ImageResource,
         configuration: Configuration?
@@ -53,6 +57,7 @@ func renderStaticFactoryForImageResource() -> String {
         UIImage(named: resource.name, in: resource.bundle, with: configuration)
       }
 
+      @inlinable
       public static func resource(
         _ resource: ImageResource,
         compatibleWith traitCollection: UITraitCollection? = nil
@@ -66,6 +71,7 @@ func renderStaticFactoryForImageResource() -> String {
     }
 
     extension CGImage {
+      @inlinable
       public static func resource(
         _ resource: ImageResource
       ) -> CGImage? {
@@ -77,6 +83,7 @@ func renderStaticFactoryForImageResource() -> String {
     import AppKit
 
     extension NSImage {
+      @inlinable
       public static func resource(
         _ resource: ImageResource
       ) -> NSImage? {
@@ -85,6 +92,7 @@ func renderStaticFactoryForImageResource() -> String {
     }
 
     extension CGImage {
+      @inlinable
       public static func resource(
         _ resource: ImageResource
       ) -> CGImage? {
@@ -104,6 +112,7 @@ func renderStaticFactoryForColorResource() -> String {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Color {
+      @inlinable
       public static func resource(
         _ resource: ColorResource
       ) -> Color {
@@ -117,6 +126,7 @@ func renderStaticFactoryForColorResource() -> String {
     
     extension UIColor {
       @available(iOS 11.0, *)
+      @inlinable
       public static func resource(
         _ resource: ColorResource,
         compatibleWith traitCollection: UITraitCollection? = nil
@@ -127,6 +137,7 @@ func renderStaticFactoryForColorResource() -> String {
 
     extension CGColor {
       @available(iOS 11.0, *)
+      @inlinable
       public static func resource(
         _ resource: ColorResource
       ) -> CGColor? {
@@ -138,6 +149,7 @@ func renderStaticFactoryForColorResource() -> String {
     import AppKit
 
     extension NSColor {
+      @inlinable
       public static func resource(
         _ resource: ColorResource
       ) -> NSColor? {
@@ -146,6 +158,7 @@ func renderStaticFactoryForColorResource() -> String {
     }
 
     extension CGColor {
+      @inlinable
       public static func resource(
         _ resource: ColorResource
       ) -> CGColor? {
@@ -162,6 +175,7 @@ func renderStaticFactoryForStoryboardResource() -> String {
     import UIKit
 
     extension UIStoryboard {
+      @inlinable
       public static func resource(
         _ resource: StoryboardResource
       ) -> UIStoryboard {
@@ -173,6 +187,7 @@ func renderStaticFactoryForStoryboardResource() -> String {
     import AppKit
 
     extension NSStoryboard {
+      @inlinable
       public static func resource(
         _ resource: StoryboardResource
       ) -> NSStoryboard {
@@ -190,6 +205,7 @@ func renderStaticFactoryForFontResource() -> String {
 
     @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
     extension Font {
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         size: CGFloat
@@ -203,6 +219,7 @@ func renderStaticFactoryForFontResource() -> String {
 
     @available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *)
     extension Font {
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         size: CGFloat,
@@ -214,7 +231,8 @@ func renderStaticFactoryForFontResource() -> String {
           relativeTo: textStyle
         )
       }
-
+  
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         fixedSize: CGFloat
@@ -231,6 +249,7 @@ func renderStaticFactoryForFontResource() -> String {
     import UIKit
 
     extension CTFont {
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         ofSize size: CGFloat
@@ -243,6 +262,7 @@ func renderStaticFactoryForFontResource() -> String {
     }
 
     extension UIFont {
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         ofSize size: CGFloat
@@ -251,6 +271,7 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func registerIfNeeded(
         _ resource: FontResource
       ) -> (isRegistered: Bool, didTryToRegister: Bool) {
@@ -259,11 +280,12 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func register(
         _ resource: FontResource
       ) -> Bool {
         let urls = FontResource.extensions.compactMap { ext in
-          Bundle.module.url(forResource: resource.name, withExtension: ext)
+          Bundle.resources.url(forResource: resource.name, withExtension: ext)
         }
         guard
           let fontURL = urls.last,
@@ -277,6 +299,7 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func registerIfNeeded(
         _ resources: [FontResource]
       ) -> [(font: FontResource, isRegistered: Bool, didTryToRegister: Bool)] {
@@ -287,17 +310,20 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func register(
         _ resources: [FontResource]
       ) -> [(font: FontResource, isRegistered: Bool)] {
         resources.map { ($0, register($0)) }
       }
 
+      @inlinable
       public static func installed() -> [(family: String, fonts: [String])] {
         familyNames.sorted()
           .map { (family: $0, fonts: fontNames(forFamilyName: $0).sorted()) }
       }
 
+      @inlinable
       public static func installed() -> [String] {
         familyNames.flatMap { fontNames(forFamilyName: $0) }
       }
@@ -307,6 +333,7 @@ func renderStaticFactoryForFontResource() -> String {
     import AppKit
 
     extension CTFont {
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         ofSize size: CGFloat
@@ -319,6 +346,7 @@ func renderStaticFactoryForFontResource() -> String {
     }
 
     extension NSFont {
+      @inlinable
       public static func resource(
         _ resource: FontResource,
         ofSize size: CGFloat
@@ -327,6 +355,7 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func registerIfNeeded(
         _ resource: FontResource
       ) -> (isRegistered: Bool, didTryToRegister: Bool) {
@@ -335,6 +364,7 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func register(
         _ resource: FontResource
       ) -> Bool {
@@ -353,6 +383,7 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func registerIfNeeded(
         _ resources: [FontResource]
       ) -> [(font: FontResource, isRegistered: Bool, didTryToRegister: Bool)] {
@@ -363,12 +394,14 @@ func renderStaticFactoryForFontResource() -> String {
       }
 
       @discardableResult
+      @inlinable
       public static func register(
         _ resources: [FontResource]
       ) -> [(font: FontResource, isRegistered: Bool)] {
         resources.map { ($0, register($0)) }
       }
 
+      @inlinable
       public static func installedUnsorted() -> [(family: String, fonts: [String])] {
         NSFontManager.shared.availableFontFamilies.map { family in
           NSFontManager.shared.availableMembers(ofFontFamily: family).map { memebers in
@@ -377,6 +410,7 @@ func renderStaticFactoryForFontResource() -> String {
         }
       }
 
+      @inlinable
       public static func installedFontset() -> Set<String> {
         Set(
           (CTFontManagerCopyAvailableFontFamilyNames() as Array).flatMap { family -> [String] in
@@ -401,6 +435,7 @@ func renderStaticFactoryForSceneResource() -> String {
     import SceneKit
 
     extension SCNScene {
+      @inlinable
       public static func resource(
         _ resource: SCNSceneResource
       ) -> SCNScene? {

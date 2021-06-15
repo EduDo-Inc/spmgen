@@ -1,6 +1,6 @@
 import Foundation
 
-public struct StoryboardResource: CustomBundleResource, NamedType {
+public struct StoryboardResource: CustomBundleResource, NamedType, Equatable {
   public init(name: String, bundle: Bundle? = nil) {
     self.name = name
     self.bundle = bundle

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ColorResource: CustomBundleResource, NamedType {
+public struct ColorResource: CustomBundleResource, NamedType, Equatable {
   public init(name: String, bundle: Bundle? = nil) {
     self.name = name
     self.bundle = bundle
