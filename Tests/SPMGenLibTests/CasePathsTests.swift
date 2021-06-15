@@ -383,6 +383,9 @@ final class CasePathsTests: XCTestCase {
   
   func testDeepNesting() {
     let source = """
+    import A
+    import Foundation
+    
     extension A {
       struct Ignore {
         struct Subignore {}
@@ -408,7 +411,10 @@ final class CasePathsTests: XCTestCase {
     XCTAssertEqual(
       generationData,
       GenerationData(
-        imports: [],
+        imports: [
+          "import A",
+          "import Foundation"
+        ],
         enums: [
           EnumData(
             modifiers: [],
@@ -450,7 +456,9 @@ final class CasePathsTests: XCTestCase {
       //
       //  Do not modify!
       
+      import A
       import CasePaths
+      import Foundation
       
       extension CasePath where Root == A.B.C.Event {
          static var none: CasePath<Root, Void> {

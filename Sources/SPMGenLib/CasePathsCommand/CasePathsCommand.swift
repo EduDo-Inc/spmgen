@@ -75,11 +75,17 @@ func generateCasePaths(for data: GenerationData) -> String {
   //
   //  Do not modify!
   """
+  
   var imports = data.imports
   if !imports.contains("import CasePaths") { imports.append("import CasePaths") }
-  let importsString = imports.joined(separator: "\n")
+  let importsString = imports.sorted().joined(separator: "\n")
   let importsSeparator = imports.isEmpty ? "" : "\n\n"
-  let enums = data.enums.map(generateCasePaths)
+  
+  let enums = data.enums
+    .filter { !$0.cases.isEmpty }
+    .sorted(by: { $0.identifier < $1.identifier })
+    .map(generateCasePaths)
+  
   return fileAnnotation + "\n\n" +
     importsString + importsSeparator +
     enums.joined(separator: "\n\n")
@@ -169,11 +175,13 @@ func generateCasePaths(for enumData: EnumData) -> String {
       }
     }
   
-  let staticGetters = enumData.cases.map { caseData in
-    let decl = declaration(caseData)
-    let impl = implementation(caseData)
-    return decl + impl + "\n  }"
-  }.joined(separator: "\n\n")
+  let staticGetters = enumData.cases
+    .sorted(by: { $0.identifier < $1.identifier })
+    .map { caseData in
+      let decl = declaration(caseData)
+      let impl = implementation(caseData)
+      return decl + impl + "\n  }"
+    }.joined(separator: "\n\n")
   
   return openExtension + "\n" + staticGetters + "\n}"
 }
