@@ -102,6 +102,73 @@ func renderStaticFactoryForImageResource() -> String {
       }
     }
   #endif
+  
+  #if os(iOS)
+    extension UIImage {
+      @available(iOS 13.0, *)
+      @inlinable
+      public static func resource(
+        _ resource: ImageResource?,
+        configuration: Configuration?
+      ) -> UIImage? {
+        return resource.flatMap { resource in
+          UIImage(
+            named: resource.name,
+            in: resource.bundle,
+            with: configuration
+          )
+        }
+      }
+
+      @inlinable
+      public static func resource(
+        _ resource: ImageResource?,
+        compatibleWith traitCollection: UITraitCollection? = nil
+      ) -> UIImage? {
+        return resource.flatMap { resource in
+          UIImage(
+            named: resource.name,
+            in: resource.bundle,
+            compatibleWith: traitCollection
+          )
+        }
+      }
+    }
+
+    extension CGImage {
+      @inlinable
+      public static func resource(
+        _ resource: ImageResource?
+      ) -> CGImage? {
+        return UIImage.resource(resource)?.cgImage
+      }
+    }
+
+  #elseif os(macOS)
+    import AppKit
+
+    extension NSImage {
+      @inlinable
+      public static func resource(
+        _ resource: ImageResource?
+      ) -> NSImage? {
+        return resource.flatMap { resource in
+          resource.bundle?.image(forResource: resource.name)
+        }
+      }
+    }
+
+    extension CGImage {
+      @inlinable
+      public static func resource(
+        _ resource: ImageResource?
+      ) -> CGImage? {
+        return NSImage.resource(resource).flatMap { image in
+          image.cgImage(forProposedRect: nil, context: .current, hints: nil)
+        }
+      }
+    }
+  #endif
   """
 }
 
