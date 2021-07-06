@@ -102,7 +102,7 @@ func renderStaticFactoryForImageResource() -> String {
       }
     }
   #endif
-  
+
   #if os(iOS)
     extension UIImage {
       @available(iOS 13.0, *)
