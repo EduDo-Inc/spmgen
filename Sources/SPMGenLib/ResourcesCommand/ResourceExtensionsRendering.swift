@@ -436,7 +436,7 @@ func renderStaticFactoryForFontResource() -> String {
         _ resource: FontResource
       ) -> Bool {
         let urls = FontResource.extensions.compactMap { ext in
-          Bundle.module.url(forResource: resource.name, withExtension: ext)
+          Bundle.resources.url(forResource: resource.name, withExtension: ext)
         }
         guard
           let fontURL = urls.last,
