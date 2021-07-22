@@ -114,7 +114,7 @@ private func detectResources(
     }
   }
   return folder.flatMapContents(recoursive: recoursive) { object in
-    types.first(where: { $0.extensions.contains(object.extension ?? "") })
+    types.first(where: { $0.extensions.contains(object.extension ?? "")})
       .map { type in
         let name = extractName(from: object.name)
         if type == SCNSceneResource.self {
@@ -168,7 +168,7 @@ func sortingForResourses(lhs: RenderableResource, rhs: RenderableResource) -> Bo
 
 // MARK: - Static factory rendering
 func renderStaticFactories(for resources: [RenderableResource]) -> String {
-  guard let resourceTypeName = resources.first.map({ $0.typeName })
+  guard let resourceTypeName = resources.first.map({ $0.typeName})
   else { return "" }
 
   var output = ""

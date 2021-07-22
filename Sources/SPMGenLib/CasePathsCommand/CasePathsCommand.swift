@@ -85,7 +85,7 @@ func generateCasePaths(for data: GenerationData) -> String {
 
   let enums = data.enums
     .filter { !$0.cases.isEmpty }
-    .sorted(by: { $0.identifier < $1.identifier })
+    .sorted(by: { $0.identifier < $1.identifier})
     .map(generateCasePaths)
 
   return fileAnnotation + "\n\n" + importsString + importsSeparator
@@ -188,7 +188,7 @@ func generateCasePaths(for enumData: EnumData) -> String {
     }
 
   let staticGetters = enumData.cases
-    .sorted(by: { $0.identifier < $1.identifier })
+    .sorted(by: { $0.identifier < $1.identifier})
     .map { caseData in
       let decl = declaration(caseData)
       let impl = implementation(caseData)

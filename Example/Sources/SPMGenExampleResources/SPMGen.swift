@@ -361,7 +361,7 @@ extension ImageResource {
     public static func installedUnsorted() -> [(family: String, fonts: [String])] {
       NSFontManager.shared.availableFontFamilies.map { family in
         NSFontManager.shared.availableMembers(ofFontFamily: family).map { memebers in
-          (family, memebers.compactMap { $0.first as? String })
+          (family, memebers.compactMap { $0.first as? String})
         }.or((family, [String]()))
       }
     }
@@ -371,7 +371,8 @@ extension ImageResource {
         (CTFontManagerCopyAvailableFontFamilyNames() as Array).flatMap { family -> [String] in
           if let family = family as? String {
             return NSFontManager.shared.availableMembers(ofFontFamily: family)
-              .map { $0.compactMap { $0.first as? String } }
+              .map { $0.compactMap { $0.first as? String
+            }}
               .or([String]())
           }
           else {

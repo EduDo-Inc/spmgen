@@ -52,7 +52,8 @@ extension String {
 
     let rest = parts.dropFirst()
       .map { String($0) }
-      .map { $0.uppercasedFirst() }
+      .map { $0.uppercasedFirst()
+    }
 
     result = ([first] + rest).joined(separator: "")
 

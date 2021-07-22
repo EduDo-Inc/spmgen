@@ -8,8 +8,10 @@ func renderStaticFactoriesForKnownResources() -> String {
   ]
   return
     renderers
-    .sorted { $0.key < $1.key }
-    .map { $0.render() }
+    .sorted { $0.key < $1.key
+  }
+    .map { $0.render()
+  }
     .joined(separator: "\n\n")
 }
 
