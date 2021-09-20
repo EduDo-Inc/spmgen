@@ -32,12 +32,7 @@ let package = Package(
     .package(
       url: "https://github.com/JohnSundell/Files.git",
       from: "4.0.0"
-    ),
-    .package(
-      name: "SwiftSyntax",
-      url: "https://github.com/apple/swift-syntax.git",
-      .exact("0.50400.0")
-    ),
+    )
   ],
   targets: [
     .target(
@@ -57,22 +52,14 @@ let package = Package(
         .product(
           name: "Files",
           package: "Files"
-        ),
-        .product(
-          name: "SwiftSyntax",
-          package: "SwiftSyntax"
-        ),
+        )
       ]
     ),
     .testTarget(
       name: "SPMGenLibTests",
       dependencies: [
         .target(name: "SPMGenLib"),
-        .target(name: "SPMResources"),
-        .product(
-          name: "SwiftSyntax",
-          package: "SwiftSyntax"
-        ),
+        .target(name: "SPMResources")
       ]
     ),
     .target(name: "SPMResources"),

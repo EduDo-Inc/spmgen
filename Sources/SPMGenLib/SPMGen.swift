@@ -6,7 +6,7 @@ import Foundation
 
 public struct SPMGen: ParsableCommand {
   public static let configuration = CommandConfiguration(
-    subcommands: [Resources.self, CasePaths.self]
+    subcommands: [Resources.self]
   )
 
   public init() {}
