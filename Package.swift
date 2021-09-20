@@ -32,7 +32,7 @@ let package = Package(
     .package(
       url: "https://github.com/JohnSundell/Files.git",
       from: "4.0.0"
-    )
+    ),
   ],
   targets: [
     .target(
@@ -52,14 +52,14 @@ let package = Package(
         .product(
           name: "Files",
           package: "Files"
-        )
+        ),
       ]
     ),
     .testTarget(
       name: "SPMGenLibTests",
       dependencies: [
         .target(name: "SPMGenLib"),
-        .target(name: "SPMResources")
+        .target(name: "SPMResources"),
       ]
     ),
     .target(name: "SPMResources"),
